@@ -1,6 +1,12 @@
 package org.yyama.selenium.sample;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -10,11 +16,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class Main {
-	public static void main(String[] args) {
+	
+	private static final String DIR ="C:\\Users\\yyama\\Desktop\\tmp\\screenshot";
+	
+	public static void main(String[] args) throws Exception {
 		WebDriverManager.firefoxdriver().setup();
 		WebDriver driver = new FirefoxDriver();
 		driver.get("http://www.google.com");
-
+		sleep(2000);
+		screenshot(driver);
         WebElement element = driver.findElement(By.name("q"));
         element.sendKeys("Cheese!");
         element.submit();
@@ -24,13 +34,31 @@ public class Main {
                 return d.getTitle().toLowerCase().startsWith("cheese!");
             }
         });
+		sleep(2000);
+		screenshot(driver);
+
+		driver.findElement(By.className("LC20lb")).click();
+		
         System.out.println("Page title is: " + driver.getTitle());
+
+		sleep(2000);
+		screenshot(driver);
         
-        try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-		}
+        sleep(5000);
+
         driver.quit();
         
+	}
+	
+	private static void sleep(long l) {
+        try {
+			Thread.sleep(l);
+		} catch (InterruptedException e) {
+		}
+	}
+	
+	private static void screenshot(WebDriver driver) throws Exception {
+		File sfile =((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        FileUtils.copyFile( sfile, new File(DIR+"\\" + sfile.getName()));
 	}
 }
